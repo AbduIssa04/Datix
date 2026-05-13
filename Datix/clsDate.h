@@ -744,6 +744,194 @@ public:
 		IncreaseDateByOneCentury(*this);
 	}
 
+	clsDate IncreaseDateByOneMillennium(clsDate& Date)
+	{
+		//Period of 1000 years
+		Date.Year += 1000;
+		return Date;
+	}
+
+	clsDate IncreaseDateByOneMillennium()
+	{
+		IncreaseDateByOneMillennium(*this);
+	}
+
+	static clsDate DecreaseDateByOneDay(clsDate Date)
+	{
+		if (Date.Day == 1)
+		{
+			if (Date.Month == 1)
+			{
+				Date.Month = 12;
+				Date.Day = 31;
+				Date.Year--;
+			}
+			else
+			{
+
+				Date.Month--;
+				Date.Day = NumberOfDaysInAMonth(Date.Month, Date.Year);
+			}
+		}
+		else
+		{
+			Date.Day--;
+		}
+
+		return Date;
+	}
+
+	void DecreaseDateByOneDay()
+	{
+		DecreaseDateByOneDay(*this);
+	}
+
+	static clsDate DecreaseDateByOneWeek(clsDate& Date)
+	{
+
+		for (int i = 1; i <= 7; i++)
+		{
+			Date = DecreaseDateByOneDay(Date);
+		}
+
+		return Date;
+	}
+
+	void DecreaseDateByOneWeek()
+	{
+		DecreaseDateByOneWeek(*this);
+	}
+
+	static clsDate DecreaseDateByXWeeks(short Weeks, clsDate& Date)
+	{
+
+		for (short i = 1; i <= Weeks; i++)
+		{
+			Date = DecreaseDateByOneWeek(Date);
+		}
+		return Date;
+	}
+
+	void DecreaseDateByXWeeks(short Weeks)
+	{
+		DecreaseDateByXWeeks(Weeks, *this);
+	}
+
+	static clsDate DecreaseDateByOneMonth(clsDate& Date)
+	{
+
+		if (Date.Month == 1)
+		{
+			Date.Month = 12;
+			Date.Year--;
+		}
+		else
+			Date.Month--;
+
+
+		//last check day in date should not exceed max days in the current month
+	   // example if date is 31/3/2022 decreasing one month should not be 31/2/2022, it should
+	   // be 28/2/2022
+		short NumberOfDaysInCurrentMonth = NumberOfDaysInAMonth(Date.Month, Date.Year);
+		if (Date.Day > NumberOfDaysInCurrentMonth)
+		{
+			Date.Day = NumberOfDaysInCurrentMonth;
+		}
+
+
+		return Date;
+	}
+
+	void DecreaseDateByOneMonth()
+	{
+		DecreaseDateByOneMonth(*this);
+	}
+
+	static clsDate DecreaseDateByXDays(short Days, clsDate& Date)
+	{
+
+		for (short i = 1; i <= Days; i++)
+		{
+			Date = DecreaseDateByOneDay(Date);
+		}
+		return Date;
+	}
+
+	void DecreaseDateByXDays(short Days)
+	{
+		DecreaseDateByXDays(Days, *this);
+	}
+
+	static clsDate DecreaseDateByXMonths(short Months, clsDate& Date)
+	{
+
+		for (short i = 1; i <= Months; i++)
+		{
+			Date = DecreaseDateByOneMonth(Date);
+		}
+		return Date;
+	}
+
+	void DecreaseDateByXMonths(short Months)
+	{
+		DecreaseDateByXMonths(Months, *this);
+	}
+
+	static clsDate DecreaseDateByOneYear(clsDate& Date)
+	{
+
+		Date.Year--;
+		return Date;
+	}
+
+	void DecreaseDateByOneYear()
+	{
+		DecreaseDateByOneYear(*this);
+	}
+
+	static clsDate DecreaseDateByXYears(short Years, clsDate& Date)
+	{
+
+		Date.Year -= Years;
+		return Date;
+	}
+
+	void DecreaseDateByXYears(short Years)
+	{
+		DecreaseDateByXYears(Years, *this);
+	}
+
+	static clsDate DecreaseDateByOneDecade(clsDate& Date)
+	{
+		//Period of 10 years
+		Date.Year -= 10;
+		return Date;
+	}
+
+	void DecreaseDateByOneDecade()
+	{
+		DecreaseDateByOneDecade(*this);
+	}
+
+	static clsDate DecreaseDateByXDecades(short Decades, clsDate& Date)
+	{
+
+		Date.Year -= Decades * 10;
+		return Date;
+	}
+
+	void DecreaseDateByXDecades(short Decades)
+	{
+		DecreaseDateByXDecades(Decades, *this);
+	}
+
+	static clsDate DecreaseDateByOneCentury(clsDate& Date)
+	{
+		//Period of 100 years
+		Date.Year -= 100;
+		return Date;
+	}
+
 
 };
 
