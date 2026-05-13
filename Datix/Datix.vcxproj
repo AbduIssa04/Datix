@@ -123,7 +123,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="clsDate.cpp" />
     <ClCompile Include="Datix.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="clsDate.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
