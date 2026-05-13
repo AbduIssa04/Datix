@@ -395,6 +395,354 @@ public:
 		return TotalDays;
 	}
 
+	short DaysFromTheBeginingOfTheYear()
+	{
+
+
+		short TotalDays = 0;
+
+		for (int i = 1; i <= _Month - 1; i++)
+		{
+			TotalDays += NumberOfDaysInAMonth(i, _Year);
+		}
+
+		TotalDays += _Day;
+
+		return TotalDays;
+	}
+
+	static clsDate GetDateFromDayOrderInYear(short DateOrderInYear, short Year)
+	{
+
+		clsDate Date;
+		short RemainingDays = DateOrderInYear;
+		short MonthDays = 0;
+
+		Date.Year = Year;
+		Date.Month = 1;
+
+		while (true)
+		{
+			MonthDays = NumberOfDaysInAMonth(Date.Month, Year);
+
+			if (RemainingDays > MonthDays)
+			{
+				RemainingDays -= MonthDays;
+				Date.Month++;
+			}
+			else
+			{
+				Date.Day = RemainingDays;
+				break;
+			}
+
+		}
+
+		return Date;
+	}
+
+	void AddDays(short Days)
+	{
+
+
+		short RemainingDays = Days + DaysFromTheBeginingOfTheYear(_Day, _Month, _Year);
+		short MonthDays = 0;
+
+		_Month = 1;
+
+		while (true)
+		{
+			MonthDays = NumberOfDaysInAMonth(_Month, _Year);
+
+			if (RemainingDays > MonthDays)
+			{
+				RemainingDays -= MonthDays;
+				_Month++;
+
+				if (_Month > 12)
+				{
+					_Month = 1;
+					_Year++;
+
+				}
+			}
+			else
+			{
+				_Day = RemainingDays;
+				break;
+			}
+
+		}
+
+
+	}
+
+	static bool IsDate1BeforeDate2(clsDate Date1, clsDate Date2)
+	{
+		return  (Date1.Year < Date2.Year) ? true : ((Date1.Year == Date2.Year) ? (Date1.Month < Date2.Month ? true : (Date1.Month == Date2.Month ? Date1.Day < Date2.Day : false)) : false);
+	}
+
+	bool IsDateBeforeDate2(clsDate Date2)
+	{
+		//note: *this sends the current object :-) 
+		return  IsDate1BeforeDate2(*this, Date2);
+
+	}
+
+	static bool IsDate1EqualDate2(clsDate Date1, clsDate Date2)
+	{
+		return  (Date1.Year == Date2.Year) ? ((Date1.Month == Date2.Month) ? ((Date1.Day == Date2.Day) ? true : false) : false) : false;
+	}
+
+	bool IsDateEqualDate2(clsDate Date2)
+	{
+		return  IsDate1EqualDate2(*this, Date2);
+	}
+
+	static bool IsLastDayInMonth(clsDate Date)
+	{
+
+		return (Date.Day == NumberOfDaysInAMonth(Date.Month, Date.Year));
+
+	}
+
+	bool IsLastDayInMonth()
+	{
+
+		return IsLastDayInMonth(*this);
+
+	}
+
+	static bool IsLastMonthInYear(short Month)
+	{
+		return (Month == 12);
+	}
+
+	static clsDate AddOneDay(clsDate Date)
+	{
+		if (IsLastDayInMonth(Date))
+		{
+			if (IsLastMonthInYear(Date.Month))
+			{
+				Date.Month = 1;
+				Date.Day = 1;
+				Date.Year++;
+			}
+			else
+			{
+				Date.Day = 1;
+				Date.Month++;
+			}
+		}
+		else
+		{
+			Date.Day++;
+		}
+
+		return Date;
+	}
+
+	void AddOneDay()
+
+	{
+		*this = AddOneDay(*this);
+	}
+
+	static void  SwapDates(clsDate& Date1, clsDate& Date2)
+	{
+
+		clsDate TempDate;
+		TempDate = Date1;
+		Date1 = Date2;
+		Date2 = TempDate;
+
+	}
+
+	static int GetDifferenceInDays(clsDate Date1, clsDate Date2, bool IncludeEndDay = false)
+	{
+		//this will take care of negative diff
+		int Days = 0;
+		short SawpFlagValue = 1;
+
+		if (!IsDate1BeforeDate2(Date1, Date2))
+		{
+			//Swap Dates 
+			SwapDates(Date1, Date2);
+			SawpFlagValue = -1;
+
+		}
+
+		while (IsDate1BeforeDate2(Date1, Date2))
+		{
+			Days++;
+			Date1 = AddOneDay(Date1);
+		}
+
+		return IncludeEndDay ? ++Days * SawpFlagValue : Days * SawpFlagValue;
+	}
+
+	int GetDifferenceInDays(clsDate Date2, bool IncludeEndDay = false)
+	{
+		return GetDifferenceInDays(*this, Date2, IncludeEndDay);
+	}
+
+	static short CalculateMyAgeInDays(clsDate DateOfBirth)
+	{
+		return GetDifferenceInDays(DateOfBirth, clsDate::GetSystemDate(), true);
+	}
+	//above no need to have nonstatic function for the object because it does not depend on any data from it.
+
+	static clsDate IncreaseDateByOneWeek(clsDate& Date)
+	{
+
+		for (int i = 1; i <= 7; i++)
+		{
+			Date = AddOneDay(Date);
+		}
+
+		return Date;
+	}
+
+	void IncreaseDateByOneWeek()
+	{
+		IncreaseDateByOneWeek(*this);
+	}
+
+	clsDate IncreaseDateByXWeeks(short Weeks, clsDate& Date)
+	{
+
+		for (short i = 1; i <= Weeks; i++)
+		{
+			Date = IncreaseDateByOneWeek(Date);
+		}
+		return Date;
+	}
+
+	void IncreaseDateByXWeeks(short Weeks)
+	{
+		IncreaseDateByXWeeks(Weeks, *this);
+	}
+
+	clsDate IncreaseDateByOneMonth(clsDate& Date)
+	{
+
+		if (Date.Month == 12)
+		{
+			Date.Month = 1;
+			Date.Year++;
+		}
+		else
+		{
+			Date.Month++;
+		}
+
+		//last check day in date should not exceed max days in the current month
+		// example if date is 31/1/2022 increasing one month should not be 31/2/2022, it should
+		// be 28/2/2022
+		short NumberOfDaysInCurrentMonth = NumberOfDaysInAMonth(Date.Month, Date.Year);
+		if (Date.Day > NumberOfDaysInCurrentMonth)
+		{
+			Date.Day = NumberOfDaysInCurrentMonth;
+		}
+
+		return Date;
+	}
+
+	void IncreaseDateByOneMonth()
+	{
+
+		IncreaseDateByOneMonth(*this);
+
+	}
+
+	clsDate IncreaseDateByXDays(short Days, clsDate& Date)
+	{
+
+		for (short i = 1; i <= Days; i++)
+		{
+			Date = AddOneDay(Date);
+		}
+		return Date;
+	}
+
+	void IncreaseDateByXDays(short Days)
+	{
+
+		IncreaseDateByXDays(Days, *this);
+	}
+
+	clsDate IncreaseDateByXMonths(short Months, clsDate& Date)
+	{
+
+		for (short i = 1; i <= Months; i++)
+		{
+			Date = IncreaseDateByOneMonth(Date);
+		}
+		return Date;
+	}
+
+	void IncreaseDateByXMonths(short Months)
+	{
+		IncreaseDateByXMonths(Months, *this);
+	}
+
+	static clsDate IncreaseDateByOneYear(clsDate& Date)
+	{
+		Date.Year++;
+		return Date;
+	}
+
+	void IncreaseDateByOneYear()
+	{
+		IncreaseDateByOneYear(*this);
+	}
+
+	clsDate IncreaseDateByXYears(short Years, clsDate& Date)
+	{
+		Date.Year += Years;
+		return Date;
+
+	}
+
+	void IncreaseDateByXYears(short Years)
+	{
+		IncreaseDateByXYears(Years);
+	}
+
+	clsDate IncreaseDateByOneDecade(clsDate& Date)
+	{
+		//Period of 10 years
+		Date.Year += 10;
+		return Date;
+	}
+
+	void IncreaseDateByOneDecade()
+	{
+		IncreaseDateByOneDecade(*this);
+	}
+
+	clsDate IncreaseDateByXDecades(short Decade, clsDate& Date)
+	{
+		Date.Year += Decade * 10;
+		return Date;
+	}
+
+	void IncreaseDateByXDecades(short Decade)
+	{
+		IncreaseDateByXDecades(Decade, *this);
+	}
+
+	clsDate IncreaseDateByOneCentury(clsDate& Date)
+	{
+		//Period of 100 years
+		Date.Year += 100;
+		return Date;
+	}
+
+	void IncreaseDateByOneCentury()
+	{
+		IncreaseDateByOneCentury(*this);
+	}
 
 
 };
