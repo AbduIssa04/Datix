@@ -932,6 +932,196 @@ public:
 		return Date;
 	}
 
+	void DecreaseDateByOneCentury()
+	{
+		DecreaseDateByOneCentury(*this);
+	}
+
+	static clsDate DecreaseDateByOneMillennium(clsDate& Date)
+	{
+		//Period of 1000 years
+		Date.Year -= 1000;
+		return Date;
+	}
+
+	void DecreaseDateByOneMillennium()
+	{
+		DecreaseDateByOneMillennium(*this);
+	}
+
+
+	static short IsEndOfWeek(clsDate Date)
+	{
+		return  DayOfWeekOrder(Date.Day, Date.Month, Date.Year) == 6;
+	}
+
+	short IsEndOfWeek()
+	{
+		return IsEndOfWeek(*this);
+	}
+
+	static bool IsWeekEnd(clsDate Date)
+	{
+		//Weekends are Fri and Sat
+		short DayIndex = DayOfWeekOrder(Date.Day, Date.Month, Date.Year);
+		return  (DayIndex == 5 || DayIndex == 6);
+	}
+
+	bool IsWeekEnd()
+	{
+		return  IsWeekEnd(*this);
+	}
+
+	static bool IsBusinessDay(clsDate Date)
+	{
+		//Weekends are Sun,Mon,Tue,Wed and Thur
+
+	   /*
+		short DayIndex = DayOfWeekOrder(Date.Day, Date.Month, Date.Year);
+		return  (DayIndex >= 5 && DayIndex <= 4);
+	   */
+
+	   //shorter method is to invert the IsWeekEnd: this will save updating code.
+		return !IsWeekEnd(Date);
+
+	}
+
+	bool IsBusinessDay()
+	{
+		return  IsBusinessDay(*this);
+	}
+
+	static short DaysUntilTheEndOfWeek(clsDate Date)
+	{
+		return 6 - DayOfWeekOrder(Date.Day, Date.Month, Date.Year);
+	}
+
+	short DaysUntilTheEndOfWeek()
+	{
+		return  DaysUntilTheEndOfWeek(*this);
+	}
+
+	static short DaysUntilTheEndOfMonth(clsDate Date1)
+	{
+
+		clsDate EndOfMontDate;
+		EndOfMontDate.Day = NumberOfDaysInAMonth(Date1.Month, Date1.Year);
+		EndOfMontDate.Month = Date1.Month;
+		EndOfMontDate.Year = Date1.Year;
+
+		return GetDifferenceInDays(Date1, EndOfMontDate, true);
+
+	}
+
+	short DaysUntilTheEndOfMonth()
+	{
+		return DaysUntilTheEndOfMonth(*this);
+	}
+
+	static short DaysUntilTheEndOfYear(clsDate Date1)
+	{
+
+		clsDate EndOfYearDate;
+		EndOfYearDate.Day = 31;
+		EndOfYearDate.Month = 12;
+		EndOfYearDate.Year = Date1.Year;
+
+		return GetDifferenceInDays(Date1, EndOfYearDate, true);
+
+	}
+
+	short DaysUntilTheEndOfYear()
+	{
+		return  DaysUntilTheEndOfYear(*this);
+	}
+
+	//i added this method to calculate business days between 2 days
+	static short CalculateBusinessDays(clsDate DateFrom, clsDate DateTo)
+	{
+
+		short Days = 0;
+		while (IsDate1BeforeDate2(DateFrom, DateTo))
+		{
+			if (IsBusinessDay(DateFrom))
+				Days++;
+
+			DateFrom = AddOneDay(DateFrom);
+		}
+
+		return Days;
+
+	}
+
+	static short CalculateVacationDays(clsDate DateFrom, clsDate DateTo)
+	{
+		/*short Days = 0;
+		while (IsDate1BeforeDate2(DateFrom, DateTo))
+		{
+			if (IsBusinessDay(DateFrom))
+				Days++;
+
+			DateFrom = AddOneDay(DateFrom);
+		}*/
+
+		return CalculateBusinessDays(DateFrom, DateTo);
+
+	}
+	//above method is eough , no need to have method for the object
+
+	static clsDate CalculateVacationReturnDate(clsDate DateFrom, short VacationDays)
+	{
+
+		short WeekEndCounter = 0;
+
+		for (short i = 1; i <= VacationDays; i++)
+		{
+
+			if (IsWeekEnd(DateFrom))
+				WeekEndCounter++;
+
+			DateFrom = AddOneDay(DateFrom);
+		}
+		//to add weekends 
+		for (short i = 1; i <= WeekEndCounter; i++)
+			DateFrom = AddOneDay(DateFrom);
+
+		return DateFrom;
+	}
+
+	static bool IsDate1AfterDate2(clsDate Date1, clsDate Date2)
+	{
+		return (!IsDate1BeforeDate2(Date1, Date2) && !IsDate1EqualDate2(Date1, Date2));
+
+	}
+
+	bool IsDateAfterDate2(clsDate Date2)
+	{
+		return IsDate1AfterDate2(*this, Date2);
+	}
+
+	enum enDateCompare { Before = -1, Equal = 0, After = 1 };
+
+	static enDateCompare CompareDates(clsDate Date1, clsDate Date2)
+	{
+		if (IsDate1BeforeDate2(Date1, Date2))
+			return enDateCompare::Before;
+
+		if (IsDate1EqualDate2(Date1, Date2))
+			return enDateCompare::Equal;
+
+		/* if (IsDate1AfterDate2(Date1,Date2))
+			 return enDateCompare::After;*/
+
+			 //this is faster
+		return enDateCompare::After;
+
+	}
+
+	enDateCompare CompareDates(clsDate Date2)
+	{
+		return CompareDates(*this, Date2);
+	}
+
 
 };
 
