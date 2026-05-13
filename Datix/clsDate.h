@@ -213,6 +213,52 @@ public:
 
 	}
 
+	short NumberOfDaysInAMonth()
+	{
+		return NumberOfDaysInAMonth(_Month, _Year);
+	}
+
+	static short NumberOfHoursInAMonth(short Month, short Year)
+	{
+		return  NumberOfDaysInAMonth(Month, Year) * 24;
+	}
+
+	short NumberOfHoursInAMonth()
+	{
+		return  NumberOfDaysInAMonth(_Month, _Year) * 24;
+	}
+
+	static int NumberOfMinutesInAMonth(short Month, short Year)
+	{
+		return  NumberOfHoursInAMonth(Month, Year) * 60;
+	}
+
+	int NumberOfMinutesInAMonth()
+	{
+		return  NumberOfHoursInAMonth(_Month, _Year) * 60;
+	}
+
+	static int NumberOfSecondsInAMonth(short Month, short Year)
+	{
+		return  NumberOfMinutesInAMonth(Month, Year) * 60;
+	}
+
+	int NumberOfSecondsInAMonth()
+	{
+		return  NumberOfMinutesInAMonth(_Month, _Year) * 60;
+	}
+
+	static short DayOfWeekOrder(short Day, short Month, short Year)
+	{
+		short a, y, m;
+		a = (14 - Month) / 12;
+		y = Year - a;
+		m = Month + (12 * a) - 2;
+		// Gregorian:
+		//0:sun, 1:Mon, 2:Tue...etc
+		return (Day + y + (y / 4) - (y / 100) + (y / 400) + ((31 * m) / 12)) % 7;
+	}
+
 
 };
 
