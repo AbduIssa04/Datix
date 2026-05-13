@@ -259,6 +259,143 @@ public:
 		return (Day + y + (y / 4) - (y / 100) + (y / 400) + ((31 * m) / 12)) % 7;
 	}
 
+	short DayOfWeekOrder()
+	{
+		return DayOfWeekOrder(_Day, _Month, _Year);
+	}
+
+	static string DayShortName(short DayOfWeekOrder)
+	{
+		string arrDayNames[] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
+
+		return arrDayNames[DayOfWeekOrder];
+
+	}
+
+	static string DayShortName(short Day, short Month, short Year)
+	{
+
+		string arrDayNames[] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
+
+		return arrDayNames[DayOfWeekOrder(Day, Month, Year)];
+
+	}
+
+	string DayShortName()
+	{
+
+		string arrDayNames[] = { "Sun","Mon","Tue","Wed","Thu","Fri","Sat" };
+
+		return arrDayNames[DayOfWeekOrder(_Day, _Month, _Year)];
+
+	}
+
+	static string MonthShortName(short MonthNumber)
+	{
+		string Months[12] = { "Jan", "Feb", "Mar",
+						   "Apr", "May", "Jun",
+						   "Jul", "Aug", "Sep",
+						   "Oct", "Nov", "Dec"
+		};
+
+		return (Months[MonthNumber - 1]);
+	}
+
+	string MonthShortName()
+	{
+
+		return MonthShortName(_Month);
+	}
+
+	static void PrintMonthCalendar(short Month, short Year)
+	{
+		int NumberOfDays;
+
+		// Index of the day from 0 to 6
+		int current = DayOfWeekOrder(1, Month, Year);
+
+		NumberOfDays = NumberOfDaysInAMonth(Month, Year);
+
+		// Print the current month name
+		printf("\n  _______________%s_______________\n\n",
+			MonthShortName(Month).c_str());
+
+		// Print the columns
+		printf("  Sun  Mon  Tue  Wed  Thu  Fri  Sat\n");
+
+		// Print appropriate spaces
+		int i;
+		for (i = 0; i < current; i++)
+			printf("     ");
+
+		for (int j = 1; j <= NumberOfDays; j++)
+		{
+			printf("%5d", j);
+
+
+			if (++i == 7)
+			{
+				i = 0;
+				printf("\n");
+			}
+		}
+
+		printf("\n  _________________________________\n");
+
+	}
+
+	void PrintMonthCalendar()
+	{
+		PrintMonthCalendar(_Month, _Year);
+	}
+
+	static void PrintYearCalendar(int Year)
+	{
+		printf("\n  _________________________________\n\n");
+		printf("           Calendar - %d\n", Year);
+		printf("  _________________________________\n");
+
+
+		for (int i = 1; i <= 12; i++)
+		{
+			PrintMonthCalendar(i, Year);
+		}
+
+		return;
+	}
+
+	void PrintYearCalendar()
+	{
+		printf("\n  _________________________________\n\n");
+		printf("           Calendar - %d\n", _Year);
+		printf("  _________________________________\n");
+
+
+		for (int i = 1; i <= 12; i++)
+		{
+			PrintMonthCalendar(i, _Year);
+		}
+
+		return;
+	}
+
+	static short DaysFromTheBeginingOfTheYear(short Day, short Month, short Year)
+	{
+
+
+		short TotalDays = 0;
+
+		for (int i = 1; i <= Month - 1; i++)
+		{
+			TotalDays += NumberOfDaysInAMonth(i, Year);
+		}
+
+		TotalDays += Day;
+
+		return TotalDays;
+	}
+
+
 
 };
 
